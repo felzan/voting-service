@@ -22,7 +22,7 @@ import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/topics", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/topics", produces = MediaType.APPLICATION_JSON_VALUE)
 public class TopicController {
 
 	@Value("${defaultSessionTime:1}")
@@ -34,7 +34,7 @@ public class TopicController {
 		return ResponseEntity.ok(service.save(request));
 	}
 
-	@PutMapping(value = "{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PutMapping(value = "{id}")
 	public ResponseEntity<Topic> startSession(@PathVariable("id") Integer id,
                                               @RequestParam(value = "sessionEnd", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime sessionEnd) throws Exception {
 		if (Objects.isNull(sessionEnd)) {
