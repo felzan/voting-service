@@ -1,6 +1,5 @@
 package com.felzan.southsystem.business;
 
-import com.felzan.southsystem.dto.TopicDTO;
 import com.felzan.southsystem.dto.TopicDTORequest;
 import com.felzan.southsystem.entity.Topic;
 import com.felzan.southsystem.repository.TopicRepository;
