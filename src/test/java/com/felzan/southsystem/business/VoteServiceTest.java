@@ -19,13 +19,15 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VoteServiceTest {
+
+    private final static Integer TOPIC_ID = 1;
+    private final static Integer USER_ID = 42;
 
     @InjectMocks
     VoteService service;
@@ -38,17 +40,9 @@ public class VoteServiceTest {
 
     @Test
     public void shouldSave() {
-        Integer topicId = 1;
-        Integer userId = 42;
-
-        VotePK votePK = new VotePK(topicId, userId);
-
-        Topic topic = new Topic();
-        topic.setId(topicId);
-        topic.setDescription("description");
-        topic.setSessionEnd(LocalDateTime.now().plusMinutes(2));
-
-        VoteDTO voteDTO = new VoteDTO(VoteEnum.NO, topicId, userId);
+        VotePK votePK = buildVotePK();
+        Topic topic = buildTopic(true);
+        VoteDTO voteDTO = buildVoteDTO();
 
         when(topicRepository.findById(anyInt())).thenReturn(Optional.of(topic));
         when(repository.existsById(votePK)).thenReturn(false);
@@ -60,9 +54,7 @@ public class VoteServiceTest {
 
     @Test(expected = SessionDoesNotExistException.class)
     public void shouldSaveThenThrowSessionDoesNotExistException() {
-        Integer topicId = 1;
-        Integer userId = 42;
-        VoteDTO voteDTO = new VoteDTO(VoteEnum.NO, topicId, userId);
+        VoteDTO voteDTO = buildVoteDTO();
 
         when(topicRepository.findById(anyInt())).thenReturn(Optional.empty());
 
@@ -71,15 +63,8 @@ public class VoteServiceTest {
 
     @Test(expected = SessionIsClosedException.class)
     public void shouldSaveThenThrowSessionIsClosedException() {
-        Integer topicId = 1;
-        Integer userId = 42;
-
-        Topic topic = new Topic();
-        topic.setId(topicId);
-        topic.setDescription("description");
-        topic.setSessionEnd(LocalDateTime.now().minusMinutes(2));
-
-        VoteDTO voteDTO = new VoteDTO(VoteEnum.NO, topicId, userId);
+        Topic topic = buildTopic(false);
+        VoteDTO voteDTO = buildVoteDTO();
 
         when(topicRepository.findById(anyInt())).thenReturn(Optional.of(topic));
 
@@ -88,21 +73,34 @@ public class VoteServiceTest {
 
     @Test(expected = VoteDuplicatedException.class)
     public void shouldSaveThenThrowVoteDuplicatedException() {
-        Integer topicId = 1;
-        Integer userId = 42;
-
-        VotePK votePK = new VotePK(topicId, userId);
-
-        Topic topic = new Topic();
-        topic.setId(topicId);
-        topic.setDescription("description");
-        topic.setSessionEnd(LocalDateTime.now().plusMinutes(2));
-
-        VoteDTO voteDTO = new VoteDTO(VoteEnum.NO, topicId, userId);
+        VotePK votePK = new VotePK(TOPIC_ID, USER_ID);
+        Topic topic = buildTopic(true);
+        VoteDTO voteDTO = buildVoteDTO();
 
         when(topicRepository.findById(anyInt())).thenReturn(Optional.of(topic));
         when(repository.existsById(votePK)).thenReturn(true);
 
         service.save(voteDTO);
     }
+
+    private static Topic buildTopic(boolean sessionOpen) {
+        Topic topic = new Topic();
+        topic.setId(TOPIC_ID);
+        topic.setDescription("description");
+        if (sessionOpen) {
+            topic.setSessionEnd(LocalDateTime.now().plusMinutes(2));
+        } else {
+            topic.setSessionEnd(LocalDateTime.now().minusMinutes(2));
+        }
+        return topic;
+    }
+
+    private static VotePK buildVotePK() {
+        return new VotePK(TOPIC_ID, USER_ID);
+    }
+
+    private static VoteDTO buildVoteDTO() {
+        return new VoteDTO(VoteEnum.NO, TOPIC_ID, USER_ID);
+    }
+
 }
