@@ -23,11 +23,16 @@ public class TopicService {
 
 	public Topic startSession(Integer id, LocalDateTime sessionEnd) throws Exception {
 		Optional<Topic> optionalTopic = repository.findById(id);
-		if (optionalTopic.isPresent()) {
-			Topic topic = optionalTopic.get();
-			topic.setSessionEnd(sessionEnd);
-			return repository.save(topic);
+		if (!optionalTopic.isPresent()) {
+			throw new Exception("Topic not found!");
 		}
-		throw new Exception("Topic not found");
+
+		Topic topic = optionalTopic.get();
+
+		if (topic.getSessionEnd() != null) {
+			throw new Exception("Session already started!");
+		}
+		topic.setSessionEnd(sessionEnd);
+		return repository.save(topic);
 	}
 }

@@ -37,7 +37,7 @@ public class TopicController {
 	@PutMapping(value = "{id}")
 	public ResponseEntity<Topic> startSession(@PathVariable("id") Integer id,
                                               @RequestParam(value = "sessionEnd", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime sessionEnd) throws Exception {
-		if (Objects.isNull(sessionEnd)) {
+		if (sessionEnd == null) {
 			sessionEnd = LocalDateTime.now().plusMinutes(defaultSessionTime);
 		}
 		return ResponseEntity.ok(service.startSession(id, sessionEnd));
