@@ -4,8 +4,8 @@ import com.felzan.southsystem.dto.VoteDTO;
 import com.felzan.southsystem.entity.Topic;
 import com.felzan.southsystem.entity.Vote;
 import com.felzan.southsystem.entity.VotePK;
-import com.felzan.southsystem.exception.SessionDoesNotExistException;
-import com.felzan.southsystem.exception.SessionIsClosedException;
+import com.felzan.southsystem.exception.NotFoundException;
+import com.felzan.southsystem.exception.SessionClosedException;
 import com.felzan.southsystem.exception.VoteDuplicatedException;
 import com.felzan.southsystem.repository.TopicRepository;
 import com.felzan.southsystem.repository.VoteRepository;
@@ -25,13 +25,13 @@ public class VoteService {
 	public void save(VoteDTO dto) {
 		Optional<Topic> optionalTopic = topicRepository.findById(dto.getTopicId());
 		if (!optionalTopic.isPresent()) {
-			throw new SessionDoesNotExistException();
+			throw new NotFoundException("This session does not exists.");
 		}
 		Topic topic = optionalTopic.get();
 
 		boolean isSessionEnded = topic.getSessionEnd().isBefore(LocalDateTime.now());
 		if (isSessionEnded) {
-			throw new SessionIsClosedException();
+			throw new SessionClosedException();
 		}
 
 		boolean voteExists = repository.existsById(new VotePK(dto.getTopicId(), dto.getUserId()));

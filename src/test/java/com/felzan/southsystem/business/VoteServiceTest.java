@@ -5,8 +5,8 @@ import com.felzan.southsystem.entity.Topic;
 import com.felzan.southsystem.entity.Vote;
 import com.felzan.southsystem.entity.VotePK;
 import com.felzan.southsystem.enums.VoteEnum;
-import com.felzan.southsystem.exception.SessionDoesNotExistException;
-import com.felzan.southsystem.exception.SessionIsClosedException;
+import com.felzan.southsystem.exception.NotFoundException;
+import com.felzan.southsystem.exception.SessionClosedException;
 import com.felzan.southsystem.exception.VoteDuplicatedException;
 import com.felzan.southsystem.repository.TopicRepository;
 import com.felzan.southsystem.repository.VoteRepository;
@@ -52,7 +52,7 @@ public class VoteServiceTest {
         service.save(voteDTO);
     }
 
-    @Test(expected = SessionDoesNotExistException.class)
+    @Test(expected = NotFoundException.class)
     public void shouldSaveThenThrowSessionDoesNotExistException() {
         VoteDTO voteDTO = buildVoteDTO();
 
@@ -61,7 +61,7 @@ public class VoteServiceTest {
         service.save(voteDTO);
     }
 
-    @Test(expected = SessionIsClosedException.class)
+    @Test(expected = SessionClosedException.class)
     public void shouldSaveThenThrowSessionIsClosedException() {
         Topic topic = buildTopic(false);
         VoteDTO voteDTO = buildVoteDTO();

@@ -2,6 +2,8 @@ package com.felzan.southsystem.business;
 
 import com.felzan.southsystem.dto.TopicDTORequest;
 import com.felzan.southsystem.entity.Topic;
+import com.felzan.southsystem.exception.NotFoundException;
+import com.felzan.southsystem.exception.SessionAlreadyOpenException;
 import com.felzan.southsystem.repository.TopicRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,16 +23,16 @@ public class TopicService {
 		return repository.save(topic);
 	}
 
-	public Topic startSession(Integer id, LocalDateTime sessionEnd) throws Exception {
+	public Topic startSession(Integer id, LocalDateTime sessionEnd) {
 		Optional<Topic> optionalTopic = repository.findById(id);
 		if (!optionalTopic.isPresent()) {
-			throw new Exception("Topic not found!");
+			throw new NotFoundException("This session does not exists.");
 		}
 
 		Topic topic = optionalTopic.get();
 
 		if (topic.getSessionEnd() != null) {
-			throw new Exception("Session already started!");
+			throw new SessionAlreadyOpenException();
 		}
 		topic.setSessionEnd(sessionEnd);
 		return repository.save(topic);

@@ -2,8 +2,12 @@ package com.felzan.southsystem.business;
 
 import com.felzan.southsystem.dto.TopicDTORequest;
 import com.felzan.southsystem.entity.Topic;
+import com.felzan.southsystem.exception.NotFoundException;
+import com.felzan.southsystem.exception.SessionAlreadyOpenException;
 import com.felzan.southsystem.repository.TopicRepository;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -38,7 +42,7 @@ public class TopicServiceTest {
     }
 
     @Test
-    public void shouldStartSession() throws Exception {
+    public void shouldStartSession() {
         Integer id = 1;
         Topic topic = new Topic();
         topic.setDescription("description");
@@ -50,12 +54,26 @@ public class TopicServiceTest {
         service.startSession(id, LocalDateTime.now());
     }
 
-    @Test(expected = Exception.class)
-    public void shouldStartSessionThenThrowException() throws Exception {
+    @Test(expected = NotFoundException.class)
+    public void shouldStartSessionThenThrowNotFoundException() {
         Integer id = 1;
         Optional<Topic> optionalTopic = Optional.empty();
 
         when(repository.findById(id)).thenReturn(optionalTopic);
+
+        service.startSession(id, LocalDateTime.now());
+    }
+
+    @Test(expected = SessionAlreadyOpenException.class)
+    public void shouldStartSessionThenThrowSessionAlreadyOpenException() {
+        Integer id = 1;
+        Topic topic = new Topic();
+        topic.setDescription("description");
+        topic.setSessionEnd(LocalDateTime.now());
+        Optional<Topic> optionalTopic = Optional.of(topic);
+
+        when(repository.findById(id)).thenReturn(optionalTopic);
+        when(repository.save(any(Topic.class))).thenReturn(topic);
 
         service.startSession(id, LocalDateTime.now());
     }

@@ -4,11 +4,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.CONFLICT)
-public class VoteDuplicatedException extends RuntimeException {
+public class SessionAlreadyOpenException extends RuntimeException {
 
-    private static final String MESSAGE = "This vote has already been counted.";
+    private static final String MESSAGE = "This session is already open.";
 
-    public VoteDuplicatedException() {
+    public SessionAlreadyOpenException() {
         super(MESSAGE);
     }
 }
