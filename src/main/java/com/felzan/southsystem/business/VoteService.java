@@ -25,7 +25,7 @@ public class VoteService {
 	public void save(VoteDTO dto) {
 		Optional<Topic> optionalTopic = topicRepository.findById(dto.getTopicId());
 		if (!optionalTopic.isPresent()) {
-			throw new NotFoundException("This session does not exists.");
+			throw new NotFoundException();
 		}
 		Topic topic = optionalTopic.get();
 

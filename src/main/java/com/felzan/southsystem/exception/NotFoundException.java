@@ -6,7 +6,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class NotFoundException extends RuntimeException {
 
+    private final static String MESSAGE = "This session does not exists.";
+
     public NotFoundException(String message) {
         super(message);
+    }
+
+    public NotFoundException() {
+        super(MESSAGE);
     }
 }
