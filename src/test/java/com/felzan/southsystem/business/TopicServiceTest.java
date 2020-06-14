@@ -73,7 +73,6 @@ public class TopicServiceTest {
         Optional<Topic> optionalTopic = Optional.of(topic);
 
         when(repository.findById(id)).thenReturn(optionalTopic);
-        when(repository.save(any(Topic.class))).thenReturn(topic);
 
         service.startSession(id, LocalDateTime.now());
     }

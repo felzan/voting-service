@@ -1,5 +1,7 @@
 package com.felzan.southsystem.business;
 
+import com.felzan.southsystem.client.UserClient;
+import com.felzan.southsystem.client.UserDTO;
 import com.felzan.southsystem.dto.VoteDTO;
 import com.felzan.southsystem.entity.Topic;
 import com.felzan.southsystem.entity.Vote;
@@ -31,12 +33,12 @@ public class VoteServiceTest {
 
     @InjectMocks
     VoteService service;
-
     @Mock
     VoteRepository repository;
-
     @Mock
     TopicRepository topicRepository;
+    @Mock
+    UserClient userClient;
 
     @Test
     public void shouldSave() {
@@ -44,6 +46,7 @@ public class VoteServiceTest {
         Topic topic = buildTopic(true);
         VoteDTO voteDTO = buildVoteDTO();
 
+        when(userClient.getUser(anyInt())).thenReturn(new UserDTO());
         when(topicRepository.findById(anyInt())).thenReturn(Optional.of(topic));
         when(repository.existsById(votePK)).thenReturn(false);
 
@@ -53,9 +56,19 @@ public class VoteServiceTest {
     }
 
     @Test(expected = NotFoundException.class)
+    public void shouldSaveThenThrowUserNotFoundException() {
+        VoteDTO voteDTO = buildVoteDTO();
+
+        doThrow(new NotFoundException()).when(userClient).getUser(USER_ID);
+
+        service.save(voteDTO);
+    }
+
+    @Test(expected = NotFoundException.class)
     public void shouldSaveThenThrowSessionDoesNotExistException() {
         VoteDTO voteDTO = buildVoteDTO();
 
+        when(userClient.getUser(anyInt())).thenReturn(new UserDTO());
         when(topicRepository.findById(anyInt())).thenReturn(Optional.empty());
 
         service.save(voteDTO);
@@ -66,6 +79,7 @@ public class VoteServiceTest {
         Topic topic = buildTopic(false);
         VoteDTO voteDTO = buildVoteDTO();
 
+        when(userClient.getUser(anyInt())).thenReturn(new UserDTO());
         when(topicRepository.findById(anyInt())).thenReturn(Optional.of(topic));
 
         service.save(voteDTO);
@@ -77,6 +91,7 @@ public class VoteServiceTest {
         Topic topic = buildTopic(true);
         VoteDTO voteDTO = buildVoteDTO();
 
+        when(userClient.getUser(anyInt())).thenReturn(new UserDTO());
         when(topicRepository.findById(anyInt())).thenReturn(Optional.of(topic));
         when(repository.existsById(votePK)).thenReturn(true);
 

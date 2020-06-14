@@ -1,5 +1,7 @@
 package com.felzan.southsystem.business;
 
+import com.felzan.southsystem.client.UserClient;
+import com.felzan.southsystem.client.UserDTO;
 import com.felzan.southsystem.dto.VoteDTO;
 import com.felzan.southsystem.entity.Topic;
 import com.felzan.southsystem.entity.Vote;
@@ -21,8 +23,14 @@ public class VoteService {
 
 	VoteRepository repository;
 	TopicRepository topicRepository;
+	UserClient userClient;
 
 	public void save(VoteDTO dto) {
+		try {
+			userClient.getUser(dto.getUserId());
+		} catch (Exception e) {
+			throw new NotFoundException("User not found!");
+		}
 		Optional<Topic> optionalTopic = topicRepository.findById(dto.getTopicId());
 		if (!optionalTopic.isPresent()) {
 			throw new NotFoundException();
