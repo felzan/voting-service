@@ -1,5 +1,13 @@
 # Voting service API
 
+## Rodando
+Utilizei MySQL, então é preciso ter um banco MySQL com o schema **voting** e configurar as propriedades do projeto (profile de dev cria automaticamente o schema)
+
+Executar no terminal
+```bash
+./mvnw spring-boot:run
+```
+
 #### Interpretação do problema
 Interpretei como necessário apenas a criação de tópicos da assembleia;
 onde seria criado um tópico (com ou sem o tempo final da sessão de votação)
