@@ -1,7 +1,7 @@
 # Voting service API
 
 #### Interpretação do problema
-Interpretei como necessário apenas a criação de tópicos da assembléia;
+Interpretei como necessário apenas a criação de tópicos da assembleia;
 onde seria criado um tópico (com ou sem o tempo final da sessão de votação)
 Podendo ser iniciado a sessão de votação do tópico com o tempo final da sessão (ou 1 min sem passar o tempo)
 
